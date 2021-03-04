@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- 头文件，mybatis映射 -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!-- 命名空间，mapper接口的包地址 -->
+<mapper namespace="org.whlf.myspringproj.mapper.UserMapper">
+    <!-- id方法名， parameterType是方法中的参数，resultType返回的对象-->
+    <select id="getAdminList" resultType="org.whlf.myspringproj.entity.Admin">
+        SELECT * FROM admin
+        WHERE 1=1
+        <if test="adminName!=null and adminName!=''">
+            AND adminName LIKE concat('%','${adminName}','%')
+        </if>
+        <if test="adminN!=null and adminN!=''">
+            AND adminN LIKE concat('%','${adminN}','%')
+        </if>
+        ORDER BY adminTime DESC
+    </select>
+    <select id="getAdminList1" parameterType="org.whlf.myspringproj.entity.Admin" resultType="org.whlf.myspringproj.entity.Admin">
+        CALL SHOWIMG
+    </select>
+    <select id="deleteAdmin" parameterType="org.whlf.myspringproj.entity.Admin">
+        DELETE
+        FROM admin
+        WHERE adminid = #{adminid}
+    </select>
+    <select id="getAdmin" parameterType="org.whlf.myspringproj.entity.Admin"
+            resultType="org.whlf.myspringproj.entity.Admin">
+        SELECT *
+        FROM admin
+        where adminid = #{adminid}
+    </select>
+    <update id="updateAdmin" parameterType="org.whlf.myspringproj.entity.Admin">
+        UPDATE admin
+        SET adminEmail=#{adminEmail},
+            adminPwd=#{adminPwd},
+            adminN=#{adminN},
+            adminPhone=#{adminPhone},
+            adminName=#{adminName}
+        where adminid = #{adminid}
+    </update>
+    <insert id="adminInsert" parameterType="org.whlf.myspringproj.entity.Admin">
+        INSERT INTO admin(adminName, adminPwd, adminN, adminEmail, adminPhone, adminType, adminTime)
+        VALUES (#{adminName}, #{adminPwd}, #{adminN}, #{adminEmail}, #{adminPhone}, 1, now())
+    </insert>
+</mapper>

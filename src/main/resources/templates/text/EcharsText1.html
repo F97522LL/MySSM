@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>learn-echarts</title>
+    <!--引入jquery-->
+    <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+    <!-- 引入 echarts.js -->
+    <script src="https://cdn.staticfile.org/echarts/4.3.0/echarts.min.js"></script>
+</head>
+
+<body>
+<div>
+    开始时间：<input id="startTime" type="time">
+    结束时间：<input id="endTime" type="time">
+    时间间隔：<input id="timeInterval" type="text" placeholder="整数(分钟)">
+    <button onclick="produceEcharts()">生成图表</button>
+</div>
+<div id="echartsDiv" style="width: 900px;height:400px;margin-top: 20px;">
+
+</div>
+</body>
+<script>
+    /**
+     *生成echarts图表
+     */
+    function produceEcharts() {
+        // 获取开始时间
+        let startTimeStr = $("#startTime").val();
+        //获取结束时间
+        let endTimeStr = $("#endTime").val();
+        //获取时间间隔
+        let timeIntervalStr = $("#timeInterval").val();
+        //这里只做了简单验证
+        if (!startTimeStr || !endTimeStr || !timeIntervalStr) {
+            return;
+        }
+        // 基于准备好的dom，初始化echarts实例
+        let myChart = echarts.init(document.getElementById("echartsDiv"));
+        myChart.showLoading(); // 开启 loading 效果
+
+        //获取时间间隔数组
+        let timeIntervalArr = getTimeInterArr(startTimeStr, endTimeStr, timeIntervalStr);
+        // 获取X轴数组
+        let xAxisArr = getXAxis(timeIntervalArr);
+        //获取数据（Y轴）
+        let countData = getData(xAx isArr);
+
+        myChart.hideLoading(); // 隐藏 loading 效果
+        var option = {
+            title: {
+                text: ''
+            },
+            tooltip: {},
+            legend: {
+                data: ['人数']
+            },
+            xAxis: {
+                data: xAxisArr,
+                axisLabel: {
+                    interval: 0,// 横轴信息全部显示
+                    rotate: 30
+                }
+            },
+            yAxis: {},
+            series: [{
+                name: '人数',
+                type: 'bar',
+                data: countData
+            }]
+        };
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+
+    }
+
+    /**
+     * 获取时间间隔数组
+     *
+     * @param startTimeStr 开始时间
+     * @param endTimeStr 结束时间
+     * @param timeIntervalStr 时间间隔
+     * @returns
+     */
+    function getTimeInterArr(startTimeStr, endTimeStr, timeIntervalStr) {
+        let timeIntervalArr = [];
+        timeIntervalArr.push(startTimeStr); //放入开始时间
+        let time = startTimeStr;
+        while (true) {
+            time = time.split(":");
+            let hTime = parseInt(time[0], 10);
+            let mTime = (parseInt(time[1]) + parseInt(timeIntervalStr));
+
+            if (mTime >= 60) {
+                hTime = hTime + parseInt(mTime / 60, 10);
+                mTime = mTime % 60;
+            }
+            time = (hTime < 10 ? "0" : '') + hTime + ":" + (mTime < 10 ? "0" : '')
+                + mTime;
+            if (time >= endTimeStr) {
+                timeIntervalArr.push(endTimeStr);
+                break;
+            }
+            timeIntervalArr.push(time);
+        }
+        return timeIntervalArr;
+    }
+
+    /**
+     * 获取X轴
+     *
+     * @param timeIntervaArr
+     * @returns
+     */
+    function getXAxis(timeIntervaArr) {
+        let xArr = [];
+        for (let i = 0; i < timeIntervaArr.length - 1; i++) {
+            xArr.push(timeIntervaArr[i] + "-" + timeIntervaArr[i + 1]);
+        }
+        return xArr;
+    }
+
+    /**
+     * 获取数据
+     *
+     * @param xAxisArr
+     * @returns
+     */
+    function getData(xAxisArr) {
+        let resultArr = [];
+        for (let i = 0; i < xAxisArr.length; i++) {
+            //生成一个随机数
+            let num = Math.ceil(Math.random() * 20);
+            resultArr.push(num);
+            //输出原始数据
+            console.log(xAxisArr[i] + ":" + num);
+        }
+        return resultArr;
+    }
+
+</script>
+</html>

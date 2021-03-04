@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- 头文件，mybatis映射 -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!-- 命名空间，mapper接口的包地址 -->
+<mapper namespace="org.whlf.myspringproj.mapper.SysUserMapper">
+    <!-- id方法名， parameterType是方法中的参数，resultType返回的对象-->
+    <select id="get" parameterType="org.whlf.myspringproj.entity.SysUser"
+            resultType="org.whlf.myspringproj.entity.SysUser">
+        SELECT *
+        FROM sys_admin
+        WHERE userName = #{userName}
+    </select>
+    <insert id="insertUser" parameterType="org.whlf.myspringproj.entity.SysUser" >
+        INSERT INTO sys_admin(username,password)
+        VALUES (#{userName},#{password})
+    </insert>
+    <update id="updatePassword" parameterType="org.whlf.myspringproj.entity.SysUser">
+        UPDATE sys_admin
+        SET password='23b9bb0e93469a8e5d5d2f9796162dac'
+        where userName = #{userName}
+    </update>
+
+</mapper>

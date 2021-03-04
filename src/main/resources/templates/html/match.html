@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>欢迎页面-L-admin1.0</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,admin-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="../css/font.css">
+    <link rel="stylesheet" href="../css/xadmin.css">
+    <script src="/js/jquery.min.js"></script>
+    <script type="text/javascript" src="../lib/layui/layui.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/xadmin.js"></script>
+    <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+    <!--[if lt IE 9]>
+    <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+    <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+<body>
+<!--<img src="img/timg.png">-->
+<xblock>
+    <button class="layui-btn" onclick="x_admin_show('创建比赛','/match-add',600)" >创建比赛</button>
+    <p style="float: right;padding-top: inherit;">当前时间：<span id="time" /></p>
+</xblock>
+    <table class="layui-table" id="admin" lay-filter="admin"></table>
+</div>
+<script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn-xs" lay-event="start">开始</a>
+    <a class="layui-btn layui-btn-xs" lay-event="end">结束</a>
+    <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+<script type="text/html" id="bdemo">
+    <a class="layui-btn layui-btn-xs" lay-event="judge">评委</a>
+    <a class="layui-btn layui-btn-xs" lay-event="see">作品</a>
+    <a class="layui-btn  layui-btn-xs" lay-event="prize">奖项</a>
+</script>
+<script>
+    $(function(){
+        //时间计时器
+        setInterval(function(){
+            var myDate = new Date;
+            var year = myDate.getFullYear(); //获取当前年
+            var mon = myDate.getMonth() + 1; //获取当前月
+            var date = myDate.getDate(); //获取当前日
+            var h = myDate.getHours();//获取当前小时数(0-23)
+            var m = myDate.getMinutes();//获取当前分钟数(0-59)
+            var s = myDate.getSeconds();//获取当前秒
+            $("#time").html(year + "-" + mon + "-" + date + "\n" + h+ ":" + m+":"+ s );
+        },500);
+    })
+
+
+    layui.use(['laydate','table'], function(){
+        var laydate = layui.laydate;
+        var table = layui.table;
+
+        // 表格初始化
+        table.render({
+            elem: '#admin'
+            ,url:'/matchList'  // 数据访问地址
+            ,title: '比赛管理表'  // 表头名称
+            ,cols: [ [
+                 {field:'matchid', title:'赛区ID', width:88,align:'center', fixed: 'left', unresize: true, sort: true}
+                ,{field:'matchName', title:'主题', width:120, edit: 'text'}
+                ,{field:'matchDivision', title:'赛区', width:120, edit: 'text'}
+                ,{field:'matchStage', title:'比赛说明', width:300, edit: 'text'}
+                , {field: 'matchImg', title: '图片',width: 130 , align: 'center',
+                    templet:'<div><img style="height:100px;width:100px;" src="{{d.matchImg}}"></div>'}
+                ,{field:'matchEnd', title:'作品收集时间', width:200, edit: 'text'}
+                ,{field:'matchStart', title:'比赛时间', width:200, edit: 'text'}
+                ,{field:'matchCreat', title:'公布结果时间', width:200, edit: 'text'}
+                ,{field:'startTime', title:'比赛开始时间', width:200, edit: 'text'}
+                ,{field:'endTime', title:'比赛结束时间', width:200, edit: 'text'}
+                ,{title:'操作', toolbar: '#bdemo', width:192}
+                ,{fixed: 'right', title:'比赛操作', toolbar: '#barDemo', width:249}
+            ] ]
+            ,page: true
+            ,limit:10
+        });
+
+        //监听行工具事件
+        table.on('tool(admin)', function(obj){//删除
+            var data = obj.data;
+            console.log(data)
+            if(obj.event === 'del'){
+                layer.confirm('真的删除比赛么', function(index){
+                    if (data.startTime!=null && data.endTime ==null){
+                        alert("比赛正在进行中无法删除！！！")
+                        layer.close(index);
+                    }else {
+                        $.ajax({//ajax异步访问Controller
+                            url: "/matchDel",
+                            type:"get",
+                            dataType: "json",
+                            data : {"matchid":data.matchid},
+                            success: function(data){
+                                if (data.status>0){
+                                    alert("删除成功！");
+                                    location.reload();
+                                }else {
+                                    alert("删除失败"+data);
+                                    console.log(data);
+                                }
+                            },
+                            error:function (e) {
+                                alert("错误！"+e.data);
+                            }
+                        })
+                    }
+                    });
+
+            } else if(obj.event === 'edit'){//编辑
+                if (data.startTime!=null && data.endTime ==null){
+                    alert("比赛正在进行中无法编辑！！！")
+                    location.reload();
+                } else {x_admin_show('编辑比赛','/match-edit?matchid='+data.matchid,600)}
+
+            }
+            else if (obj.event === 'start'){
+                layer.confirm('确定开始比赛吗？', function(index){
+                    $.ajax({//ajax异步访问Controller
+                        url: "/matchStart",
+                        type:"post",
+                        dataType: "json",
+                        data : {"matchid":data.matchid},
+                        success: function(data){
+                            if (data.status>0){
+                                alert("成功开启比赛！");
+                                location.reload();
+                            }else {
+                                alert("失败"+data.status);
+                                console.log(data);
+                            }
+                        },
+                        error:function (e) {
+                            alert("错误！"+e.data);
+                        }
+                    })
+                    layer.close(index);
+                })
+            }
+            else if (obj.event === 'end'){
+                layer.confirm('确定结束比赛吗？', function(index){
+                    $.ajax({//ajax异步访问Controller
+                        url: "/matchEnd",
+                        type:"post",
+                        dataType: "json",
+                        data : {"matchid":data.matchid},
+                        success: function(data){
+                            if (data.status>0){
+                                alert("成功结束比赛！");
+                                location.reload();
+                            }else {
+                                alert("失败"+data.status);
+                                console.log(data);
+                            }
+                        },
+                        error:function (e) {
+                            alert("错误！"+e.data);
+                        }
+                    })
+                    layer.close(index);
+                })
+            }else if (obj.event === 'see'){//查看比赛
+                x_admin_show('比赛页面','/see')
+            }else if (obj.event === 'judge'){//查看评委
+                x_admin_show('评委页面','/ju')
+            }else if (obj.event === 'prize'){//奖项
+                x_admin_show('作品页面','/prize?matchid='+data.matchid)
+            }
+        });
+    });
+
+
+</script>
+</body>
+
+</html>

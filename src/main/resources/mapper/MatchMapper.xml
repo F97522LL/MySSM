@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- 头文件，mybatis映射 -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!-- 命名空间，mapper接口的包地址 -->
+<mapper namespace="org.whlf.myspringproj.mapper.MatchMapper">
+    <!-- id方法名， parameterType是方法中的参数，resultType返回的对象-->
+    <select id="getMatchList" parameterType="org.whlf.myspringproj.entity.Match"
+            resultType="org.whlf.myspringproj.entity.Match">
+        SELECT *
+        FROM `match`
+    </select>
+    <update id="addMatch" parameterType="org.whlf.myspringproj.entity.Match">
+        INSERT INTO `match` (matchid, matchName, matchStage, matchImg, matchStart, matchWork, matchCreat)
+        VALUES (#{matchid}, #{matchName}, #{matchStage}, #{matchImg}, #{matchStart}, #{matchWork}, #{matchCreat})
+    </update>
+    <insert id="addImg" parameterType="org.whlf.myspringproj.entity.ImgList">
+        insert INTO `imgList` value (#{img})
+    </insert>
+
+    <!--    <select id="getMatchDivision" parameterType="org.whlf.myspringproj.entity.Match" resultType="org.whlf.myspringproj.entity.Match">-->
+    <!--        SELECT * FROM `match` where  matchDivision = #{matchDivision}-->
+    <!--    </select>-->
+    <!--    <update id="matchEdit" parameterType="org.whlf.myspringproj.entity.Match" >-->
+    <!--        UPDATE `match` SET  matchName = #{matchName}-->
+    <!--                         ,matchStage = #{matchStage}-->
+    <!--                         ,matchStart = #{matchStart}-->
+    <!--                         ,matchWork = #{matchWork}-->
+    <!--                         ,matchCreat = #{matchCreat}-->
+    <!--        WHERE matchid = #{matchid}-->
+    <!--    </update>-->
+
+
+    <!--    <select id="getEdit" parameterType="org.whlf.myspringproj.entity.Match" resultType="org.whlf.myspringproj.entity.Match">-->
+    <!--        SELECT * FROM `match` WHERE matchid = #{matchid}-->
+    <!--    </select>-->
+
+    <!--    <delete id="matchDel" parameterType="org.whlf.myspringproj.entity.Match">-->
+    <!--        DELETE FROM `match` WHERE matchid=#{matchid}-->
+    <!--    </delete>-->
+
+    <!--    <update id="matchStart" parameterType="org.whlf.myspringproj.entity.Match">-->
+    <!--        UPDATE `match` SET startTime = now() WHERE matchid = #{matchid}-->
+    <!--    </update>-->
+
+    <!--    <update id="matchEnd" parameterType="org.whlf.myspringproj.entity.Match">-->
+    <!--        UPDATE `match` SET endTime = now() WHERE matchid = #{matchid}-->
+    <!--    </update>-->
+
+    <!--    <insert id="insertMatchImg" parameterType="corg.whlf.myspringproj.entity.Match">-->
+    <!--        insert INTO `match` (matchImg) value (#{matchImg})-->
+    <!--    </insert>-->
+</mapper>

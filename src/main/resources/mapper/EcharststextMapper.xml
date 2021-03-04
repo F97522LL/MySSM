@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- 头文件，mybatis映射 -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!-- 命名空间，mapper接口的包地址 -->
+<mapper namespace="org.whlf.myspringproj.mapper.EcharststextMapper">
+    <!-- id方法名， parameterType是方法中的参数，resultType返回的对象-->
+    <select id="getEa" resultType="org.whlf.myspringproj.entity.Echarststext">
+        SELECT * FROM Echarststext
+        WHERE 1=1
+
+    </select>
+</mapper>

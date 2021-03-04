@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8"/>
+    <title>ECharts</title>
+    <script src="https://cdn.bootcss.com/echarts/4.6.0/echarts.min.js"></script>
+</head>
+<body>
+<div id="main" style="width: 1000px;height:400px;"></div>
+</body>
+
+<script>
+    $("#mybtn").click(function(){
+        // 基于准备好的dom，初始化echarts图表
+        var main = echarts.init(document.getElementById('main'));
+        //显示加载动画
+        main.showLoading();
+        var scrq1 = document.getElementById('scrq1').value;
+        var scrq2 = document.getElementById('scrq2').value;
+        var dwmc = document.getElementById('dwmc').value;
+        $.ajax({
+            type:"POST",
+            cache:false,
+            url:"/rcbchart",
+            data:{"scrq1": scrq1,"scrq2": scrq2,"dwmc": dwmc},
+            dataType: "json",
+            success:function (result) {
+                var valuedata = JSON.parse(result.valuedata);
+                var categorydata = JSON.parse(result.categorydata);
+                //隐藏加载动画
+                main.hideLoading();
+                main.setOption({
+                    //提示框组件
+                    tooltip: {
+                        trigger: 'axis',
+                        axisPointer: {
+                            type: 'shadow'
+                        }
+                    },
+                    //直角坐标系内绘图网格，left，right，bottom分别是距离容器左侧，右侧和底部的距离
+                    grid: {
+                        left: '3%',
+                        right: '4%',
+                        bottom: '3%',
+                        containLabel: true
+                    },
+                    //X轴
+                    xAxis: {
+                        type: 'value',
+                        boundaryGap: [0, 0.01]
+                    },
+                    //Y轴
+                    yAxis: {
+                        type: 'category',
+                        data: categorydata
+                    },
+                    series: [
+                        {
+                            name: result.dwmc,
+                            type: 'bar',
+                            data: valuedata
+                        }
+                    ]
+                })
+            }
+        })
+    });
+
+
+</script>
+</html>
